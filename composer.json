@@ -1,0 +1,47 @@
+{
+    "name": "accordous/bb-client",
+    "description": "Laravel package for Banco do Brasil API integration",
+    "type": "library",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Rafael Iga",
+            "email": "rafael.iga@accordous.com.br"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^10.0|^11.0",
+        "illuminate/cache": "^10.0|^11.0",
+        "illuminate/http": "^10.0|^11.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0|^9.0",
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "BancoDoBrasil\\": "src/BancoDoBrasil/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BancoDoBrasil\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BancoDoBrasil\\BancoDoBrasilServiceProvider"
+            ],
+            "aliases": {
+                "BancoDoBrasil": "BancoDoBrasil\\Facades\\BancoDoBrasil"
+            }
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
