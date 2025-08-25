@@ -1,9 +1,9 @@
 <?php
 
-namespace BancoDoBrasil\Tests\Feature;
+namespace Tests\Feature;
 
-use BancoDoBrasil\Tests\TestCase;
-use BancoDoBrasil\Facades\BancoDoBrasil;
+use Tests\TestCase;
+use Accordous\BbClient\Facades\BancoDoBrasil;
 use Illuminate\Support\Facades\Cache;
 
 class RegistrarBoletoCobrancaTest extends TestCase
@@ -21,8 +21,9 @@ class RegistrarBoletoCobrancaTest extends TestCase
     {
         // Skip this test if environment variables are not set
         if (empty(config('banco-do-brasil.client_id')) || 
-            empty(config('banco-do-brasil.client_secret'))) {
-            $this->markTestSkipped('API credentials not configured.');
+            empty(config('banco-do-brasil.client_secret')) ||
+            config('banco-do-brasil.client_id') === 'test-client-id') {
+            $this->markTestSkipped('API credentials not configured for real API testing.');
         }
 
         // Prepare test data

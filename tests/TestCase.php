@@ -1,9 +1,9 @@
 <?php
 
-namespace BancoDoBrasil\Tests;
+namespace Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
-use BancoDoBrasil\BancoDoBrasilServiceProvider;
+use Accordous\BbClient\Providers\BancoDoBrasilServiceProvider;
 
 class TestCase extends Orchestra
 {

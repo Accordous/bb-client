@@ -1,9 +1,9 @@
 <?php
 
-namespace BancoDoBrasil;
+namespace Accordous\BbClient\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use BancoDoBrasil\Http\BancoDoBrasilClient;
+use Accordous\BbClient\Http\BancoDoBrasilClient;
 
 class BancoDoBrasilServiceProvider extends ServiceProvider
 {
@@ -39,4 +39,4 @@ class BancoDoBrasilServiceProvider extends ServiceProvider
             ], 'config');
         }
     }
-} 
+}

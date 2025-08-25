@@ -13,7 +13,8 @@
         "php": "^8.2",
         "illuminate/support": "^10.0|^11.0",
         "illuminate/cache": "^10.0|^11.0",
-        "illuminate/http": "^10.0|^11.0"
+        "illuminate/http": "^10.0|^11.0",
+        "illuminate/validation": "^10.0|^11.0"
     },
     "require-dev": {
         "orchestra/testbench": "^8.0|^9.0",
@@ -21,21 +22,21 @@
     },
     "autoload": {
         "psr-4": {
-            "BancoDoBrasil\\": "src/BancoDoBrasil/"
+            "Accordous\\BbClient\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "BancoDoBrasil\\Tests\\": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "BancoDoBrasil\\BancoDoBrasilServiceProvider"
+                "Accordous\\BbClient\\Providers\\BancoDoBrasilServiceProvider"
             ],
             "aliases": {
-                "BancoDoBrasil": "BancoDoBrasil\\Facades\\BancoDoBrasil"
+                "BancoDoBrasil": "Accordous\\BbClient\\Facades\\BancoDoBrasil"
             }
         }
     },

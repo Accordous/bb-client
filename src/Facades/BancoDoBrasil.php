@@ -1,15 +1,18 @@
 <?php
 
-namespace BancoDoBrasil\Facades;
+namespace Accordous\BbClient\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use BancoDoBrasil\Http\BancoDoBrasilClient;
+use Accordous\BbClient\Http\BancoDoBrasilClient;
 
 /**
  * @method static string getToken()
  * @method static array registrarBoletoCobranca(array $data)
+ * @method static \Accordous\BbClient\Services\Endpoints\BoletoEndpoint boletos()
+ * @method static \Accordous\BbClient\Services\Endpoints\ConvenioEndpoint convenios()
+ * @method static \Accordous\BbClient\Services\Endpoints\WebhookEndpoint webhooks()
  * 
- * @see \BancoDoBrasil\Http\BancoDoBrasilClient
+ * @see \Accordous\BbClient\Http\BancoDoBrasilClient
  */
 class BancoDoBrasil extends Facade
 {
@@ -22,4 +25,4 @@ class BancoDoBrasil extends Facade
     {
         return BancoDoBrasilClient::class;
     }
-} 
+}
