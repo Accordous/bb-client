@@ -1,14 +1,18 @@
 # Endpoints
 
+Abaixo segue as URLs base para cada ambiente do BB Client:
+
+- https://api.sandbox.bb.com.br/cobrancas/v2 (Sandbox)
+- https://api.hm.bb.com.br/cobrancas/v2 (Homologação)
+- https://api.bb.com.br/cobrancas/v2 (Produção)
+
 ## `GET /boletos`
 
 ### 📌 Descrição
 Consulta boletos registrados no convênio, com filtros por situação, data, pagador e outros critérios.
 
-### 🌐 URL (Sandbox)
-```
-GET https://api.sandbox.bb.com.br/cobrancas/v2/boletos
-```
+### 🌐 URL (Relativa)
+`/boletos`
 
 ---
 
@@ -106,10 +110,8 @@ Segue no mesmo formato que usamos antes, mas agora **completo** conforme o schem
 ### 📌 Descrição
 Registra um novo boleto de cobrança vinculado ao convênio do cliente no Banco do Brasil.
 
-### 🌐 URL (Sandbox)
-```
-POST https://api.sandbox.bb.com.br/cobrancas/v2/boletos
-```
+### 🌐 URL (Relativa)
+`/boletos`
 
 ---
 
@@ -216,9 +218,8 @@ POST https://api.sandbox.bb.com.br/cobrancas/v2/boletos
 
 Consulta informações de baixa operacional de boletos de uma carteira de cobrança. O uso deste recurso exige habilitação prévia via PATCH do convênio e pode ser desativado da mesma forma.
 
-### 🌐 URL (Sandbox)
-
-- Base URL (sandbox): https://api.sandbox.bb.com.br/cobrancas/v2
+### 🌐 URL (Relativa)
+`/boletos-baixa-operacional`
 
 ---
 
@@ -364,8 +365,8 @@ Os parâmetros mínimos exigidos são agência, conta, carteira, variação, dat
 Consulta os detalhes de um boleto bancário.  
 O parâmetro `{id}` representa o número do título de cobrança.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/boletos/{id}?numeroConvenio={numeroConvenio}&gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/boletos/{id}?numeroConvenio={numeroConvenio}&gw-dev-app-key={gw-dev-app-key}`
 
 ### 🗂️ Parâmetros de Caminho
 - **id** *(string, obrigatório)* — Número do título de cobrança.
@@ -527,8 +528,8 @@ curl -X GET \
 ### 📌 Descrição
 Realiza alterações nos valores dos campos presentes em um boleto bancário já criado.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/boletos/{id}?gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/boletos/{id}?gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
@@ -728,8 +729,8 @@ curl -X PATCH \
 ### 📌 Descrição
 Permite a baixa (cancelamento) de um título de cobrança registrado no Banco do Brasil.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/boletos/{id}/baixar?gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/boletos/{id}/baixar?gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
@@ -834,8 +835,8 @@ curl -X PATCH \
 ### 📌 Descrição
 Cancela o Pix vinculado a um boleto de cobrança existente.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/boletos/{id}/cancelar-pix?gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/boletos/{id}/cancelar-pix?gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
@@ -954,8 +955,8 @@ curl -X PATCH \
 ### 📌 Descrição
 Gera um Pix vinculado a um boleto de cobrança, retornando um QR Code dinâmico ou estático para pagamento.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/boletos/{id}/gerar-pix?gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/boletos/{id}/gerar-pix?gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
@@ -1074,8 +1075,8 @@ curl -X POST \
 ### 📌 Descrição
 Consulta os dados de um Pix vinculado a um boleto de cobrança.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/boletos/{id}/pix?numeroConvenio={numeroConvenio}&gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/boletos/{id}/pix?numeroConvenio={numeroConvenio}&gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
@@ -1187,8 +1188,8 @@ curl -X GET \
 Lista os dados do retorno de movimento do convênio de Cobranças, permitindo consultar registros de liquidação, baixa e outros eventos ocorridos em um período informado.  
 **Atenção:** Para utilização deste serviço, é necessário entrar em contato com o Gerente de Cash ou Gerente de Relacionamento do Banco do Brasil.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/convenios/{id}/listar-retorno-movimento?gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/convenios/{id}/listar-retorno-movimento?gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
@@ -1362,8 +1363,8 @@ curl -X POST \
 ### 📌 Descrição
 Habilita a personalização de um convênio, permitindo realizar a consulta das informações de **baixa operacional** de boletos da carteira de cobranças do cliente no mesmo dia.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/convenios/{id}/ativar-consulta-baixa-operacional?gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/convenios/{id}/ativar-consulta-baixa-operacional?gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
@@ -1466,8 +1467,8 @@ curl -X PATCH \
 ### 📌 Descrição
 Desativa a personalização de um convênio, não permitindo realizar a consulta das informações de **baixa operacional** de boletos da carteira de cobranças do cliente no mesmo dia.
 
-### 🌐 URL (Sandbox)
-`https://api.sandbox.bb.com.br/cobrancas/v2/convenios/{id}/desativar-consulta-baixa-operacional?gw-dev-app-key={gw-dev-app-key}`
+### 🌐 URL (Relativa)
+`/convenios/{id}/desativar-consulta-baixa-operacional?gw-dev-app-key={gw-dev-app-key}`
 
 ### 🧾 Headers obrigatórios
 - **Authorization**: Bearer `<token_de_acesso_OAuth2.0_JWT>`
