@@ -6,6 +6,8 @@ Abaixo segue as URLs base para cada ambiente do BB Client:
 - https://api.hm.bb.com.br/cobrancas/v2 (Homologação)
 - https://api.bb.com.br/cobrancas/v2 (Produção)
 
+Em todos os endpoints (com exceção dos endpoint para Webhook) é obrigatório enviar a query `gw-dev-app-key` que é a chave da aplicação que é uma string com 32 caracteres. É a developer_application_key que pode ser encontrada acessando o item Credenciais dentro da sua aplicação no Portal Developers BB.
+
 ## `GET /boletos`
 
 ### 📌 Descrição
@@ -28,29 +30,27 @@ Consulta boletos registrados no convênio, com filtros por situação, data, pag
 
 ### 🔍 Parâmetros de Query
 
-Todos os parâmetros são opcionais, mas podem ser combinados para refinar a busca:
-
-| Parâmetro | Tipo | Descrição |
-|-----------|------|-----------|
-| `numeroConvenio` | `string` | Número do convênio de cobrança |
-| `agenciaBeneficiario` | `string` | Agência do beneficiário |
-| `contaBeneficiario` | `string` | Conta do beneficiário |
-| `indicadorSituacao` | `string` | Situação do boleto (`A` = Ativo, `B` = Baixado, `C` = Cancelado, `P` = Pago) |
-| `codigoEstadoTituloCobranca` | `string` | Estado do título (ex: `01` = registrado, `02` = liquidado) |
-| `dataInicioVencimento` | `string` | Data inicial do vencimento (formato `YYYY-MM-DD`) |
-| `dataFimVencimento` | `string` | Data final do vencimento (formato `YYYY-MM-DD`) |
-| `dataInicioRegistro` | `string` | Data inicial de registro do boleto |
-| `dataFimRegistro` | `string` | Data final de registro do boleto |
-| `cpfCnpjPagador` | `string` | CPF ou CNPJ do pagador |
-| `pagina` | `integer` | Número da página para paginação |
-| `quantidadePorPagina` | `integer` | Quantidade de boletos por página (máximo: 100) |
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `numeroConvenio` | `string` | Não | Número do convênio de cobrança |
+| `agenciaBeneficiario` | `string` | **Sim** | Agência do beneficiário |
+| `contaBeneficiario` | `string` | **Sim** | Conta do beneficiário |
+| `indicadorSituacao` | `string` | **Sim** | Situação do boleto (`A` = Ativo, `B` = Baixado, `C` = Cancelado, `P` = Pago) |
+| `codigoEstadoTituloCobranca` | `string` | Não | Estado do título (ex: `01` = registrado, `02` = liquidado) |
+| `dataInicioVencimento` | `string` | Não | Data inicial do vencimento (formato `YYYY-MM-DD`) |
+| `dataFimVencimento` | `string` | Não | Data final do vencimento (formato `YYYY-MM-DD`) |
+| `dataInicioRegistro` | `string` | Não | Data inicial de registro do boleto |
+| `dataFimRegistro` | `string` | Não | Data final de registro do boleto |
+| `cpfCnpjPagador` | `string` | Não | CPF ou CNPJ do pagador |
+| `pagina` | `integer` | Não | Número da página para paginação |
+| `quantidadePorPagina` | `integer` | Não | Quantidade de boletos por página (máximo: 100) |
 
 ---
 
 ### ✅ Exemplo de Requisição
 
 ```http
-GET /boletos?numeroConvenio=123456&indicadorSituacao=A&pagina=1&quantidadePorPagina=50
+GET /boletos?agenciaBeneficiario=1234&contaBeneficiario=123456&indicadorSituacao=A&numeroConvenio=123456&pagina=1&quantidadePorPagina=50
 Host: api.sandbox.bb.com.br
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 gw-dev-app-key: sua_app_key_aqui
