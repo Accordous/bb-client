@@ -23,6 +23,9 @@ return [
     // Developer Application Key
     'developer_application_key' => env('BB_DEVELOPER_APPLICATION_KEY', ''),
     
+    // Convênio
+    'convenio' => env('BB_CONVENIO', ''),
+    
     // Cobrança Configuration
     'cobranca' => [
         'gw_app_key' => env('BB_GW_APP_KEY', ''),

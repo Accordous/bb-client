@@ -5,13 +5,13 @@ namespace Accordous\BbClient\ValueObject;
 class JurosMora extends ValueObject
 {
     public $tipo;
-    public $porcentagem;
-    public $valor;
+    public float|null $porcentagem;
+    public float|null $valor;
 
     public function __construct(
         int $tipo,
-        float $porcentagem = 0.0,
-        float $valor = 0.0
+        float|null $porcentagem = null,
+        float|null $valor = null
     ) {
         $this->tipo = $tipo;
         $this->porcentagem = $porcentagem;

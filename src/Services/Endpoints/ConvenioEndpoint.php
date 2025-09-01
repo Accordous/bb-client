@@ -14,7 +14,16 @@ class ConvenioEndpoint extends Endpoint
      */
     public function ativarConsultaBaixaOperacional(string $id): Response
     {
-        return $this->client()->patch("/cobrancas/v2/convenios/{$id}/ativar-consulta-baixa-operacional");
+        $path = "/cobrancas/v2/convenios/{$id}/ativar-consulta-baixa-operacional?" . http_build_query($this->addDevAppKey());
+        $response = $this->client()->patch($path);
+        
+        // If response is not successful and body is empty, the API may have returned JSON
+        // but Laravel HTTP client didn't capture it properly. Let's make a cURL request instead.
+        if (!$response->successful() && empty($response->body())) {
+            return $this->makeCurlRequest('PATCH', $path);
+        }
+        
+        return $response;
     }
 
     /**
@@ -25,7 +34,16 @@ class ConvenioEndpoint extends Endpoint
      */
     public function desativarConsultaBaixaOperacional(string $id): Response
     {
-        return $this->client()->patch("/cobrancas/v2/convenios/{$id}/desativar-consulta-baixa-operacional");
+        $path = "/cobrancas/v2/convenios/{$id}/desativar-consulta-baixa-operacional?" . http_build_query($this->addDevAppKey());
+        $response = $this->client()->patch($path);
+        
+        // If response is not successful and body is empty, the API may have returned JSON
+        // but Laravel HTTP client didn't capture it properly. Let's make a cURL request instead.
+        if (!$response->successful() && empty($response->body())) {
+            return $this->makeCurlRequest('PATCH', $path);
+        }
+        
+        return $response;
     }
 
     /**
@@ -37,8 +55,8 @@ class ConvenioEndpoint extends Endpoint
      */
     public function listarRetornoMovimento(string $id, array $params = []): Response
     {
-        $queryParams = array_filter($params);
+        $queryParams = $this->addDevAppKey(array_filter($params));
         
-        return $this->client()->post("/cobrancas/v2/convenios/{$id}/listar-retorno-movimento", $queryParams);
+        return $this->client()->post("/cobrancas/v2/convenios/{$id}/listar-retorno-movimento?" . http_build_query($queryParams), []);
     }
 }

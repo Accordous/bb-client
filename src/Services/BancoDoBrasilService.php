@@ -20,12 +20,10 @@ class BancoDoBrasilService
      * @var BoletoEndpoint
      */
     private $boletos;
-
     /**
      * @var ConvenioEndpoint
      */
     private $convenios;
-
     /**
      * @var WebhookEndpoint
      */
@@ -60,7 +58,7 @@ class BancoDoBrasilService
             ->withHeaders([
                 'Authorization' => 'Bearer ' . $token,
                 'Content-Type' => 'application/json',
-                'gw-dev-app-key' => $this->config['developer_application_key'],
+                'Accept' => 'application/json',
             ])
             ->timeout($this->config['timeout']);
     }
@@ -95,7 +93,7 @@ class BancoDoBrasilService
                 'Authorization' => 'Basic ' . $auth,
             ])
             ->timeout($this->config['timeout'])
-            ->post($this->config['oauth_url'] . '/oauth/token', [
+            ->post($this->config['oauth_url'], [
                 'grant_type' => 'client_credentials',
                 'scope' => 'cobrancas.boletos-info cobrancas.boletos-requisicao cobrancas.convenio-requisicao'
             ]);
@@ -132,17 +130,5 @@ class BancoDoBrasilService
     public function webhooks(): WebhookEndpoint
     {
         return $this->webhooks;
-    }
-
-    /**
-     * Legacy method for backward compatibility
-     *
-     * @param array $data
-     * @return array
-     */
-    public function registrarBoletoCobranca(array $data): array
-    {
-        $response = $this->boletos()->create($data);
-        return $response->json();
     }
 }

@@ -6,14 +6,14 @@ class Multa extends ValueObject
 {
     public $tipo;
     public $data;
-    public $porcentagem;
-    public $valor;
+    public float|null $porcentagem;
+    public float|null $valor;
 
     public function __construct(
         int $tipo,
         string $data = '',
-        float $porcentagem = 0.0,
-        float $valor = 0.0
+        float|null $porcentagem = null,
+        float|null $valor = null
     ) {
         $this->tipo = $tipo;
         $this->data = $data;
