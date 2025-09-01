@@ -2,11 +2,27 @@
 
 namespace Accordous\BbClient\Enums;
 
-class EstadoTituloCobranca extends Enums
+enum EstadoTituloCobranca: string
 {
-    public const REGISTRADO = '01';
-    public const LIQUIDADO = '02';
-    public const PROTESTADO = '03';
-    public const VENCIDO = '04';
-    public const CANCELADO = '05';
+    case REGISTRADO = '01';
+    case LIQUIDADO = '02';
+    case PROTESTADO = '03';
+    case VENCIDO = '04';
+    case CANCELADO = '05';
+
+    public function getDescription(): string
+    {
+        return match($this) {
+            self::REGISTRADO => 'Registrado',
+            self::LIQUIDADO => 'Liquidado',
+            self::PROTESTADO => 'Protestado',
+            self::VENCIDO => 'Vencido',
+            self::CANCELADO => 'Cancelado',
+        };
+    }
+
+    public static function isValid(string $value): bool
+    {
+        return self::tryFrom($value) !== null;
+    }
 }

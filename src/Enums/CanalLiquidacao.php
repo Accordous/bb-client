@@ -2,11 +2,27 @@
 
 namespace Accordous\BbClient\Enums;
 
-class CanalLiquidacao extends Enums
+enum CanalLiquidacao: int
 {
-    public const AGENCIA = 1;
-    public const CORRESPONDENTE = 2;
-    public const INTERNET_BANKING = 3;
-    public const MOBILE_BANKING = 4;
-    public const ATM = 5;
+    case AGENCIA = 1;
+    case CORRESPONDENTE = 2;
+    case INTERNET_BANKING = 3;
+    case MOBILE_BANKING = 4;
+    case ATM = 5;
+
+    public function getDescription(): string
+    {
+        return match($this) {
+            self::AGENCIA => 'Agência',
+            self::CORRESPONDENTE => 'Correspondente',
+            self::INTERNET_BANKING => 'Internet Banking',
+            self::MOBILE_BANKING => 'Mobile Banking',
+            self::ATM => 'ATM',
+        };
+    }
+
+    public static function isValid(int $value): bool
+    {
+        return self::tryFrom($value) !== null;
+    }
 }

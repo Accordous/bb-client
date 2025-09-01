@@ -13,7 +13,6 @@ use Accordous\BbClient\Enums\CodigoModalidade;
 use Accordous\BbClient\Enums\TipoTitulo;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Cache;
-use Exception;
 
 class BancoDoBrasilIntegrationTest extends TestCase
 {

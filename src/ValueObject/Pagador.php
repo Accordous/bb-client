@@ -18,7 +18,7 @@ class Pagador extends ValueObject
     public $telefone;
 
     public function __construct(
-        int $tipoInscricao,
+        TipoInscricao|int $tipoInscricao,
         string $numeroInscricao,
         string $nome,
         string $endereco = '',
@@ -28,11 +28,14 @@ class Pagador extends ValueObject
         string $uf = '',
         string $telefone = ''
     ) {
-        if (!TipoInscricao::isValid($tipoInscricao)) {
+        // Converte enum para valor se necessário
+        $tipoInscricaoValue = $tipoInscricao instanceof TipoInscricao ? $tipoInscricao->value : $tipoInscricao;
+
+        if (!TipoInscricao::isValid($tipoInscricaoValue)) {
             throw new Exception('Tipo de inscrição inválido.');
         }
 
-        $this->tipoInscricao = $tipoInscricao;
+        $this->tipoInscricao = $tipoInscricaoValue;
         $this->numeroInscricao = $numeroInscricao;
         $this->nome = $nome;
         $this->endereco = $endereco;

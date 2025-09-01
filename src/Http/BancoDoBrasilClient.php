@@ -34,18 +34,6 @@ class BancoDoBrasilClient
     }
 
     /**
-     * Register a new "Boleto de Cobrança".
-     *
-     * @param array $data Dados do boleto
-     * @return array
-     * @throws RequestException
-     */
-    public function registrarBoletoCobranca(array $data)
-    {
-        return $this->service->registrarBoletoCobranca($data);
-    }
-
-    /**
      * Get boletos service
      *
      * @return \Accordous\BbClient\Services\Endpoints\BoletoEndpoint

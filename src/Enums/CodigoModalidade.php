@@ -2,8 +2,21 @@
 
 namespace Accordous\BbClient\Enums;
 
-class CodigoModalidade extends Enums
+enum CodigoModalidade: string
 {
-    public const SIMPLES = '01';
-    public const VINCULADA = '04';
+    case SIMPLES = '01';
+    case VINCULADA = '04';
+
+    public function getDescription(): string
+    {
+        return match($this) {
+            self::SIMPLES => 'Modalidade Simples',
+            self::VINCULADA => 'Modalidade Vinculada',
+        };
+    }
+
+    public static function isValid(string $value): bool
+    {
+        return self::tryFrom($value) !== null;
+    }
 }

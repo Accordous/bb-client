@@ -36,12 +36,15 @@ class BoletoBuilder extends ValueObject
         return $this;
     }
 
-    public function codigoModalidade(string $codigoModalidade): self
+    public function codigoModalidade(CodigoModalidade|string $codigoModalidade): self
     {
-        if (!CodigoModalidade::isValid($codigoModalidade)) {
+        // Converte enum para valor se necessário
+        $codigoModalidadeValue = $codigoModalidade instanceof CodigoModalidade ? $codigoModalidade->value : $codigoModalidade;
+
+        if (!CodigoModalidade::isValid($codigoModalidadeValue)) {
             throw new Exception('Código de modalidade inválido. Use 01 (Simples) ou 04 (Vinculada).');
         }
-        $this->data['codigoModalidade'] = $codigoModalidade;
+        $this->data['codigoModalidade'] = $codigoModalidadeValue;
         return $this;
     }
 
@@ -81,12 +84,15 @@ class BoletoBuilder extends ValueObject
         return $this;
     }
 
-    public function codigoTipoTitulo(int $codigoTipoTitulo): self
+    public function codigoTipoTitulo(TipoTitulo|int $codigoTipoTitulo): self
     {
-        if (!TipoTitulo::isValid($codigoTipoTitulo)) {
+        // Converte enum para valor se necessário
+        $codigoTipoTituloValue = $codigoTipoTitulo instanceof TipoTitulo ? $codigoTipoTitulo->value : $codigoTipoTitulo;
+
+        if (!TipoTitulo::isValid($codigoTipoTituloValue)) {
             throw new Exception('Código de tipo de título inválido.');
         }
-        $this->data['codigoTipoTitulo'] = $codigoTipoTitulo;
+        $this->data['codigoTipoTitulo'] = $codigoTipoTituloValue;
         return $this;
     }
 

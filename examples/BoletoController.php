@@ -149,11 +149,11 @@ class BoletoController extends Controller
 
             $boletoData = $builder->build();
 
-            $response = BancoDoBrasil::registrarBoletoCobranca($boletoData);
+            $response = BancoDoBrasil::boletos()->create($boletoData);
 
             return response()->json([
                 'success' => true,
-                'data' => $response
+                'data' => $response->json()
             ], 201);
 
         } catch (\Exception $e) {

@@ -82,10 +82,10 @@ class RegistrarBoletoCobrancaTest extends TestCase
         ];
 
         // Call the method with specific parameters
-        $response = BancoDoBrasil::registrarBoletoCobranca($data);
+        $response = BancoDoBrasil::boletos()->create($data);
 
         // Assert that the response has the expected structure
-        $this->assertIsArray($response);
+        $this->assertTrue($response->successful(), 'Boleto registration failed');
         
         // Check if response contains expected keys
         // Note: these assertions might need to be adjusted based on the actual API response

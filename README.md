@@ -158,7 +158,7 @@ $data = [
     ]
 ];
 
-$response = BancoDoBrasil::registrarBoletoCobranca($data);
+$response = BancoDoBrasil::boletos()->create($data);
 ```
 
 ### Advanced Usage with Builder Pattern
@@ -219,7 +219,7 @@ $boletoData = (new BoletoBuilder())
     ->indicadorPix('S')
     ->build();
 
-$response = BancoDoBrasil::registrarBoletoCobranca($boletoData);
+$response = BancoDoBrasil::boletos()->create($boletoData);
 ```
 
 ### Service-Level Usage

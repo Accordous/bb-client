@@ -7,7 +7,6 @@ use Accordous\BbClient\Http\BancoDoBrasilClient;
 
 /**
  * @method static string getToken()
- * @method static array registrarBoletoCobranca(array $data)
  * @method static \Accordous\BbClient\Services\Endpoints\BoletoEndpoint boletos()
  * @method static \Accordous\BbClient\Services\Endpoints\ConvenioEndpoint convenios()
  * @method static \Accordous\BbClient\Services\Endpoints\WebhookEndpoint webhooks()

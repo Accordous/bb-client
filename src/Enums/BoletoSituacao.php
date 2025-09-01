@@ -2,10 +2,25 @@
 
 namespace Accordous\BbClient\Enums;
 
-class BoletoSituacao extends Enums
+enum BoletoSituacao: string
 {
-    public const ATIVO = 'A';
-    public const BAIXADO = 'B';
-    public const CANCELADO = 'C';
-    public const PAGO = 'P';
+    case ATIVO = 'A';
+    case BAIXADO = 'B';
+    case CANCELADO = 'C';
+    case PAGO = 'P';
+
+    public function getDescription(): string
+    {
+        return match($this) {
+            self::ATIVO => 'Ativo',
+            self::BAIXADO => 'Baixado',
+            self::CANCELADO => 'Cancelado',
+            self::PAGO => 'Pago',
+        };
+    }
+
+    public static function isValid(string $value): bool
+    {
+        return self::tryFrom($value) !== null;
+    }
 }

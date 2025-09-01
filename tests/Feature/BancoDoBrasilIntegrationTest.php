@@ -63,8 +63,8 @@ class BancoDoBrasilIntegrationTest extends TestCase
         $jurosMora = new JurosMora(2, 0.0, 2.0);
         $multa = new Multa(1, '23.08.2025', 2.0, 0.0);
 
-        $boletoData = (new BoletoBuilder())
-            ->numeroConvenio(1234567)
+        $builder = (new BoletoBuilder())
+            ->numeroConvenio(3128557)
             ->numeroCarteira(17)
             ->numeroVariacaoCarteira(35)
             ->codigoModalidade(CodigoModalidade::SIMPLES)
@@ -73,20 +73,16 @@ class BancoDoBrasilIntegrationTest extends TestCase
             ->valorOriginal(100.00)
             ->codigoTipoTitulo(TipoTitulo::DUPLICATA_MERCANTIL)
             ->descricaoTipoTitulo('Duplicata Mercantil')
-            ->numeroTituloBeneficiario('12345')
-            ->numeroTituloCliente('67890')
-            ->mensagemBloquetoOcorrencia('Pagamento via PIX disponível')
             ->pagador($pagador)
             ->desconto($desconto)
             ->jurosMora($jurosMora)
-            ->multa($multa)
-            ->indicadorPix('S')
-            ->build();
+            ->multa($multa);
 
-        $response = BancoDoBrasil::registrarBoletoCobranca($boletoData);
+        $boletoData = $builder->build();
 
-        $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('numero', $response);
+        $response = BancoDoBrasil::boletos()->create($boletoData);
+
+        $this->assertTrue($response->successful(), 'Registrar boleto failed: ' . $response->body());
     }
 
     public function test_list_boletos()
