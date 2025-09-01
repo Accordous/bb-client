@@ -8,9 +8,6 @@ class WebhookEndpoint extends Endpoint
 {
     /**
      * Processa webhook de baixa operacional
-     *
-     * @param array $data
-     * @return Response
      */
     public function processarBaixaOperacional(array $data): Response
     {

@@ -3,11 +3,12 @@
 namespace Accordous\BbClient\Services\Endpoints;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Validator;
 
 abstract class Endpoint
 {
-    protected $http;
+    protected PendingRequest $http;
 
     public function __construct(PendingRequest $http)
     {
@@ -21,9 +22,6 @@ abstract class Endpoint
 
     /**
      * Add gw-dev-app-key to query parameters for all requests
-     *
-     * @param array $queryParams
-     * @return array
      */
     protected function addDevAppKey(array $queryParams = []): array
     {
@@ -53,13 +51,8 @@ abstract class Endpoint
 
     /**
      * Make a cURL request as fallback when Laravel HTTP client fails to capture error responses
-     *
-     * @param string $method
-     * @param string $url
-     * @param array $body
-     * @return \Illuminate\Http\Client\Response
      */
-    protected function makeCurlRequest(string $method, string $url, array $body = []): \Illuminate\Http\Client\Response
+    protected function makeCurlRequest(string $method, string $url, array $body = []): Response
     {
         // Ensure URL is complete (add base URL if needed)
         if (!str_starts_with($url, 'http')) {
@@ -131,7 +124,7 @@ abstract class Endpoint
         }
         
         // Create a Laravel-like Response object using Http facade
-        return new \Illuminate\Http\Client\Response(
+        return new Response(
             new \GuzzleHttp\Psr7\Response($httpCode, $parsedHeaders, $body)
         );
     }

@@ -4,7 +4,7 @@ namespace Accordous\BbClient\ValueObject;
 
 class JurosMora extends ValueObject
 {
-    public $tipo;
+    public int $tipo;
     public float|null $porcentagem;
     public float|null $valor;
 

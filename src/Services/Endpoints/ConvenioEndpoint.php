@@ -8,9 +8,6 @@ class ConvenioEndpoint extends Endpoint
 {
     /**
      * Ativar consulta de baixa operacional
-     *
-     * @param string $id
-     * @return Response
      */
     public function ativarConsultaBaixaOperacional(string $id): Response
     {
@@ -28,9 +25,6 @@ class ConvenioEndpoint extends Endpoint
 
     /**
      * Desativar consulta de baixa operacional
-     *
-     * @param string $id
-     * @return Response
      */
     public function desativarConsultaBaixaOperacional(string $id): Response
     {
@@ -48,10 +42,6 @@ class ConvenioEndpoint extends Endpoint
 
     /**
      * Listar retorno de movimento
-     *
-     * @param string $id
-     * @param array $params
-     * @return Response
      */
     public function listarRetornoMovimento(string $id, array $params = []): Response
     {

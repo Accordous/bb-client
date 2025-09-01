@@ -9,9 +9,6 @@ class BoletoEndpoint extends Endpoint
 {
     /**
      * Lista boletos com filtros
-     *
-     * @param array $filters
-     * @return Response
      */
     public function list(array $filters = []): Response
     {
@@ -34,9 +31,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Registra um novo boleto
-     *
-     * @param array $data
-     * @return Response
      */
     public function create(array $data): Response
     {
@@ -47,10 +41,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Consulta um boleto específico
-     *
-     * @param string $id
-     * @param int $numeroConvenio
-     * @return Response
      */
     public function show(string $id, int $numeroConvenio): Response
     {
@@ -63,10 +53,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Atualiza um boleto
-     *
-     * @param string $id
-     * @param array $data
-     * @return Response
      */
     public function update(string $id, array $data): Response
     {
@@ -77,10 +63,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Baixa um boleto (cancelamento)
-     *
-     * @param string $id
-     * @param array $data
-     * @return Response
      */
     public function baixar(string $id, array $data = []): Response
     {
@@ -89,9 +71,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Consulta baixa operacional
-     *
-     * @param array $params
-     * @return Response
      */
     public function consultarBaixaOperacional(array $params): Response
     {
@@ -102,9 +81,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Cancela PIX do boleto
-     *
-     * @param string $id
-     * @return Response
      */
     public function cancelarPix(string $id): Response
     {
@@ -125,9 +101,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Gera PIX para o boleto
-     *
-     * @param string $id
-     * @return Response
      */
     public function gerarPix(string $id): Response
     {
@@ -151,9 +124,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Consulta PIX do boleto
-     *
-     * @param string $id
-     * @return Response
      */
     public function consultarPix(string $id): Response
     {
@@ -227,9 +197,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Valida dados para atualização de boleto
-     *
-     * @param array $attributes
-     * @return array
      */
     protected function validateUpdate(array $attributes): array
     {
@@ -238,8 +205,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Regras de validação para atualização de boleto
-     *
-     * @return array
      */
     protected function updateRules(): array
     {
@@ -357,8 +322,6 @@ class BoletoEndpoint extends Endpoint
 
     /**
      * Mensagens de validação para atualização de boleto
-     *
-     * @return array
      */
     protected function updateMessages(): array
     {

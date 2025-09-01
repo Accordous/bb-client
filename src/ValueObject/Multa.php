@@ -4,8 +4,8 @@ namespace Accordous\BbClient\ValueObject;
 
 class Multa extends ValueObject
 {
-    public $tipo;
-    public $data;
+    public int $tipo;
+    public string $data;
     public float|null $porcentagem;
     public float|null $valor;
 

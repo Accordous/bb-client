@@ -3,6 +3,9 @@
 namespace Accordous\BbClient\Http;
 
 use Accordous\BbClient\Services\BancoDoBrasilService;
+use Accordous\BbClient\Services\Endpoints\BoletoEndpoint;
+use Accordous\BbClient\Services\Endpoints\ConvenioEndpoint;
+use Accordous\BbClient\Services\Endpoints\WebhookEndpoint;
 use Illuminate\Http\Client\RequestException;
 
 class BancoDoBrasilClient
@@ -10,12 +13,10 @@ class BancoDoBrasilClient
     /**
      * @var BancoDoBrasilService
      */
-    protected $service;
+    protected BancoDoBrasilService $service;
 
     /**
      * BancoDoBrasilClient constructor.
-     *
-     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -25,40 +26,33 @@ class BancoDoBrasilClient
     /**
      * Get OAuth token for API authentication.
      *
-     * @return string
      * @throws RequestException
      */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->service->getToken();
     }
 
     /**
      * Get boletos service
-     *
-     * @return \Accordous\BbClient\Services\Endpoints\BoletoEndpoint
      */
-    public function boletos()
+    public function boletos(): BoletoEndpoint
     {
         return $this->service->boletos();
     }
 
     /**
      * Get convenios service
-     *
-     * @return \Accordous\BbClient\Services\Endpoints\ConvenioEndpoint
      */
-    public function convenios()
+    public function convenios(): ConvenioEndpoint
     {
         return $this->service->convenios();
     }
 
     /**
      * Get webhooks service
-     *
-     * @return \Accordous\BbClient\Services\Endpoints\WebhookEndpoint
      */
-    public function webhooks()
+    public function webhooks(): WebhookEndpoint
     {
         return $this->service->webhooks();
     }

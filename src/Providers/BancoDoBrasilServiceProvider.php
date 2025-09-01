@@ -9,10 +9,8 @@ class BancoDoBrasilServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         // Merge config from file only if it exists
         $configPath = __DIR__ . '/../../config/banco-do-brasil.php';
@@ -27,10 +25,8 @@ class BancoDoBrasilServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $configPath = __DIR__ . '/../../config/banco-do-brasil.php';
         if (file_exists($configPath)) {

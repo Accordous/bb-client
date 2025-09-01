@@ -14,30 +14,28 @@ class BancoDoBrasilService
     /**
      * @var PendingRequest
      */
-    private $http;
+    private PendingRequest $http;
 
     /**
      * @var BoletoEndpoint
      */
-    private $boletos;
+    private BoletoEndpoint $boletos;
     /**
      * @var ConvenioEndpoint
      */
-    private $convenios;
+    private ConvenioEndpoint $convenios;
     /**
      * @var WebhookEndpoint
      */
-    private $webhooks;
+    private WebhookEndpoint $webhooks;
 
     /**
      * @var array
      */
-    private $config;
+    private array $config;
 
     /**
      * BancoDoBrasilService constructor.
-     *
-     * @param array $config
      */
     public function __construct(array $config)
     {
@@ -75,8 +73,6 @@ class BancoDoBrasilService
 
     /**
      * Get OAuth token for API authentication
-     *
-     * @return string
      */
     public function getToken(): string
     {
@@ -108,25 +104,16 @@ class BancoDoBrasilService
         return $token;
     }
 
-    /**
-     * @return BoletoEndpoint
-     */
     public function boletos(): BoletoEndpoint
     {
         return $this->boletos;
     }
 
-    /**
-     * @return ConvenioEndpoint
-     */
     public function convenios(): ConvenioEndpoint
     {
         return $this->convenios;
     }
 
-    /**
-     * @return WebhookEndpoint
-     */
     public function webhooks(): WebhookEndpoint
     {
         return $this->webhooks;

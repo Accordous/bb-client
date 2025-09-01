@@ -4,7 +4,7 @@ namespace Accordous\BbClient\ValueObject;
 
 class Desconto extends ValueObject
 {
-    public $tipo;
+    public int $tipo;
     public string $dataExpiracao;
     public float|null $porcentagem;
     public float|null $valor;

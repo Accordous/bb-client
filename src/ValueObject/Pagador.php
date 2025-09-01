@@ -7,15 +7,15 @@ use Exception;
 
 class Pagador extends ValueObject
 {
-    public $tipoInscricao;
-    public $numeroInscricao;
-    public $nome;
-    public $endereco;
-    public $cep;
-    public $cidade;
-    public $bairro;
-    public $uf;
-    public $telefone;
+    public int $tipoInscricao;
+    public string $numeroInscricao;
+    public string $nome;
+    public string $endereco;
+    public string $cep;
+    public string $cidade;
+    public string $bairro;
+    public string $uf;
+    public string $telefone;
 
     public function __construct(
         TipoInscricao|int $tipoInscricao,

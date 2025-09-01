@@ -9,7 +9,7 @@ use Exception;
 
 class BoletoBuilder extends ValueObject
 {
-    private $data = [];
+    private array $data = [];
 
     public function __construct()
     {
