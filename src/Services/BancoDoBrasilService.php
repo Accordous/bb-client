@@ -37,9 +37,18 @@ class BancoDoBrasilService
     /**
      * BancoDoBrasilService constructor.
      */
-    public function __construct(array $config)
+    public function __construct(string $clientId, string $clientSecret, string $developerApplicationKey, string $convenio = '')
     {
-        $this->config = $config;
+        $this->config = [
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+            'developer_application_key' => $developerApplicationKey,
+            'convenio' => $convenio,
+            'base_url' => config('banco-do-brasil.base_url'),
+            'oauth_url' => config('banco-do-brasil.oauth_url'),
+            'timeout' => config('banco-do-brasil.timeout', 30),
+            'connect_timeout' => config('banco-do-brasil.connect_timeout', 10),
+        ];
         $this->setupHttpClient();
         $this->initializeEndpoints();
     }
@@ -66,9 +75,9 @@ class BancoDoBrasilService
      */
     private function initializeEndpoints(): void
     {
-        $this->boletos = new BoletoEndpoint($this->http);
-        $this->convenios = new ConvenioEndpoint($this->http);
-        $this->webhooks = new WebhookEndpoint($this->http);
+        $this->boletos = new BoletoEndpoint($this->http, $this->config['developer_application_key'], $this->config['convenio']);
+        $this->convenios = new ConvenioEndpoint($this->http, $this->config['developer_application_key'], $this->config['convenio']);
+        $this->webhooks = new WebhookEndpoint($this->http, $this->config['developer_application_key'], $this->config['convenio']);
     }
 
     /**

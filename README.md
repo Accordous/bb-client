@@ -1,6 +1,6 @@
 # Banco do Brasil API Integration for Laravel
 
-A Laravel package for integrating with Banco do Brasil's API services, focusing on "Boleto de Cobrança" registration.
+A Laravel package for integrating with Banco do Brasil's API services, focusing on "Boleto de Cobrança" registration. This package now uses **Spatie Laravel Data** for modern, type-safe data handling with PHP 8 attributes.
 
 ## Installation
 
@@ -9,6 +9,8 @@ You can install the package via composer:
 ```bash
 composer require accordous/bb-client
 ```
+
+The package automatically includes **Spatie Laravel Data** for modern data object handling.
 
 ## Configuration
 
@@ -23,22 +25,35 @@ Then, add the following environment variables to your `.env` file:
 ```
 BB_API_BASE_URL=https://api.hm.bb.com.br
 BB_OAUTH_URL=https://oauth.hm.bb.com.br
+
 BB_CLIENT_ID=seu-client-id-aqui
 BB_CLIENT_SECRET=seu-client-secret-aqui
 BB_DEVELOPER_APPLICATION_KEY=sua-developer-key-aqui
 BB_GW_APP_KEY=sua-gw-app-key-aqui
+
 BB_API_TIMEOUT=30
 BB_API_CONNECT_TIMEOUT=10
 ```
 
-## Architecture
+## Modern Architecture with Spatie Data
 
-This package follows a clean architecture pattern with:
+This package now uses a modern architecture pattern with **Spatie Laravel Data** and **PHP 8 Attributes**:
 
-- **Enums**: Constants for API values (BoletoSituacao, TipoInscricao, etc.)
-- **ValueObjects**: Immutable data objects (Pagador, Beneficiario, Desconto, etc.)
+- **Enums**: Type-safe constants for API values (BoletoSituacao, TipoInscricao, etc.)
+- **Data Objects**: Immutable, validated data objects with attributes (PagadorData, BeneficiarioData, etc.)
 - **Services**: Business logic layer with endpoint-specific services
-- **Builders**: Fluent interface for creating complex objects
+- **Builders**: Fluent interface for creating complex objects with validation
+- **Automatic Validation**: Built-in validation using PHP 8 attributes
+- **Type Safety**: Full type safety with modern PHP features
+
+### Data Objects Available
+
+- `PagadorData`: Payer information with automatic document validation
+- `BeneficiarioData`: Beneficiary information with formatting methods
+- `DescontoData`: Discount configuration with calculation methods
+- `JurosMoraData`: Interest rate configuration with calculation methods
+- `MultaData`: Fine configuration with calculation methods
+- `BoletoData`: Complete boleto configuration with builder pattern
 
 ### Enums Available
 
@@ -49,15 +64,6 @@ This package follows a clean architecture pattern with:
 - `EstadoBaixaOperacional`: BB, OUTROS_BANCOS, CANCELAMENTO_BAIXA
 - `CanalLiquidacao`: AGENCIA, CORRESPONDENTE, INTERNET_BANKING, etc.
 - `FormaPagamento`: DINHEIRO, CHEQUE, DOC_TED, CREDITO_CONTA, PIX
-
-### ValueObjects Available
-
-- `Pagador`: Represents the payer information
-- `Beneficiario`: Represents the beneficiary information
-- `Desconto`: Represents discount information
-- `JurosMora`: Represents interest information
-- `Multa`: Represents fine information
-- `BoletoBuilder`: Fluent builder for creating boleto data
 
 ## REST API
 
@@ -161,23 +167,23 @@ $data = [
 $response = BancoDoBrasil::boletos()->create($data);
 ```
 
-### Advanced Usage with Builder Pattern
+### Modern Usage with Spatie Data Classes
 
-#### Creating a Complete Boleto
+#### Creating a Complete Boleto (Modern Approach)
 
 ```php
 use Accordous\BbClient\Facades\BancoDoBrasil;
-use Accordous\BbClient\ValueObject\BoletoBuilder;
-use Accordous\BbClient\ValueObject\Pagador;
-use Accordous\BbClient\ValueObject\Desconto;
-use Accordous\BbClient\ValueObject\JurosMora;
-use Accordous\BbClient\ValueObject\Multa;
+use Accordous\BbClient\Data\BoletoData;
+use Accordous\BbClient\Data\PagadorData;
+use Accordous\BbClient\Data\DescontoData;
+use Accordous\BbClient\Data\JurosMoraData;
+use Accordous\BbClient\Data\MultaData;
 use Accordous\BbClient\Enums\TipoInscricao;
 use Accordous\BbClient\Enums\CodigoModalidade;
 use Accordous\BbClient\Enums\TipoTitulo;
 
-// Create payer
-$pagador = new Pagador(
+// Create payer using enum factory method (auto-validation)
+$pagador = PagadorData::fromEnum(
     TipoInscricao::CPF,
     '12345678901',
     'João da Silva',
@@ -189,17 +195,17 @@ $pagador = new Pagador(
     '11999999999'
 );
 
-// Create discount
-$desconto = new Desconto(1, '25.08.2025', 5.0, 0.0); // 5% discount
+// Create discount using factory methods with automatic validation
+$desconto = DescontoData::porcentagem(2, '25.08.2025', 5.0); // 5% discount
 
-// Create interest
-$jurosMora = new JurosMora(2, 0.0, 2.0); // R$ 2.00 per day
+// Create interest using factory methods
+$jurosMora = JurosMoraData::valor(1, 2.0); // R$ 2.00 per day
 
-// Create fine
-$multa = new Multa(1, '23.08.2025', 2.0, 0.0); // 2% fine
+// Create fine using factory methods
+$multa = MultaData::porcentagem(2, '23.08.2025', 2.0); // 2% fine
 
-// Build boleto
-$boletoData = (new BoletoBuilder())
+// Build boleto with automatic validation and type safety
+$boleto = BoletoData::builder()
     ->numeroConvenio(1234567)
     ->numeroCarteira(17)
     ->numeroVariacaoCarteira(35)
@@ -208,20 +214,55 @@ $boletoData = (new BoletoBuilder())
     ->dataVencimento('22.09.2025')
     ->valorOriginal(100.00)
     ->codigoTipoTitulo(TipoTitulo::DUPLICATA_MERCANTIL)
-    ->descricaoTipoTitulo('Duplicata Mercantil')
-    ->numeroTituloBeneficiario('12345')
-    ->numeroTituloCliente('67890')
-    ->mensagemBloquetoOcorrencia('Pagamento via PIX disponível')
     ->pagador($pagador)
     ->desconto($desconto)
     ->jurosMora($jurosMora)
     ->multa($multa)
-    ->indicadorPix('S')
+    ->indicadorPix(true) // Boolean instead of string
+    ->indicadorAceiteTituloVencido(false)
     ->build();
 
-$response = BancoDoBrasil::boletos()->create($boletoData);
+// Automatic validation and calculations
+$valorComDesconto = $boleto->getValorComDesconto(); // Calculates discounts
+$isVencido = $boleto->isVencido(); // Checks if expired
+$documentoFormatado = $pagador->getFormattedDocument(); // "123.456.789-01"
+
+// Send to API with automatic serialization
+$response = BancoDoBrasil::boletos()->create($boleto->toApiArray());
 ```
 
+#### Advanced Features with Data Classes
+
+```php
+// Document validation and formatting
+$pagador = PagadorData::fromEnum(TipoInscricao::CNPJ, '12345678000195', 'Empresa Ltda');
+
+if ($pagador->isValidDocument()) {
+    echo $pagador->getFormattedDocument(); // "12.345.678/0001-95"
+    echo $pagador->getDocumentType(); // "CNPJ - Pessoa Jurídica"
+}
+
+// Automatic calculations
+$desconto = DescontoData::porcentagem(2, '25.08.2025', 10.0);
+$valorDesconto = $desconto->calcularDesconto(1000.00); // Returns 100.00
+
+$jurosMora = JurosMoraData::porcentagem(2, 2.0); // 2% monthly
+$valorJuros = $jurosMora->calcularJuros(1000.00, 5); // 5 days late
+
+// Date calculations
+$boleto = BoletoData::builder()
+    ->dataVencimento('22.08.2025')
+    // ... other required fields
+    ->build();
+
+$diasParaVencimento = $boleto->getDiasParaVencimento();
+$valorComJurosEMulta = $boleto->getValorComJurosEMulta(5); // 5 days late
+
+// Serialization options
+$array = $boleto->toArray(); // Full array with all fields
+$json = $boleto->toJson(); // JSON string
+$apiArray = $boleto->toApiArray(); // Clean array for API (no null/empty values)
+```
 ### Service-Level Usage
 
 #### Working with Boletos
@@ -322,8 +363,10 @@ $response = BancoDoBrasil::webhooks()->processarBaixaOperacional($webhookData);
 The package includes comprehensive tests demonstrating all functionality:
 
 ```bash
-./vendor/bin/phpunit tests/Feature/BancoDoBrasilIntegrationTest.php
+./vendor/bin/phpunit --testdox
 ```
+
+Full tests may take more than 30 minutes because Banco de Brasil requires you to wait 30 minutes before modifying a boleto.
 
 ## Error Handling
 
@@ -345,8 +388,6 @@ if ($response->successful()) {
 
 Please follow the established patterns:
 - Use Enums for constants
-- Create ValueObjects for complex data structures
-- Use the Builder pattern for complex object creation
 - Add tests for new functionality
 
 ## License

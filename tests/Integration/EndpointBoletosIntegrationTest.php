@@ -4,15 +4,15 @@ namespace Tests\Integration;
 
 use Tests\TestCase;
 use Accordous\BbClient\Facades\BancoDoBrasil;
-use Accordous\BbClient\ValueObject\BoletoBuilder;
-use Accordous\BbClient\ValueObject\Pagador;
+use Accordous\BbClient\Data\BoletoData;
+use Accordous\BbClient\Data\PagadorData;
 use Accordous\BbClient\Enums\TipoInscricao;
 use Accordous\BbClient\Enums\CodigoModalidade;
 use Accordous\BbClient\Enums\TipoTitulo;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Client\Response;
 
-class BoletoEndpointsTest extends TestCase
+class EndpointBoletosIntegrationTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -735,12 +735,12 @@ class BoletoEndpointsTest extends TestCase
      */
     private function createTestBoleto()
     {
-        $pagador = new Pagador(
+        $pagador = PagadorData::fromEnum(
             TipoInscricao::CPF,
-            '11144477735',
+            11144477735,
             'João da Silva - Teste Update',
             'Rua das Flores, 123',
-            '01234-567',
+            '01234567',
             'São Paulo',
             'Centro',
             'SP',
@@ -753,7 +753,7 @@ class BoletoEndpointsTest extends TestCase
         $numeroTituloCliente = sprintf("000%07d%010d", $convenio, $timestamp % 10000000000);
         $numeroTituloBeneficiario = sprintf("UPD%015d", $timestamp % 1000000000000000); // Max 18 chars
 
-        $boletoData = (new BoletoBuilder())
+        $boletoData = BoletoData::builder()
             ->numeroConvenio($convenio)
             ->numeroCarteira(17)
             ->numeroVariacaoCarteira(35)
@@ -767,10 +767,10 @@ class BoletoEndpointsTest extends TestCase
             ->numeroTituloCliente($numeroTituloCliente)
             ->mensagemBloquetoOcorrencia('Boleto criado para teste de atualização')
             ->pagador($pagador)
-            ->indicadorPix('S')
+            ->indicadorPix(true)
             ->build();
 
-        $response = BancoDoBrasil::boletos()->create($boletoData);
+        $response = BancoDoBrasil::boletos()->create($boletoData->toApiArray());
         
         $this->assertTrue($response->successful(), 'Failed to create test boleto for update: ' . $response->body());
         
@@ -784,12 +784,12 @@ class BoletoEndpointsTest extends TestCase
      */
     private function createTestBoletoWithDiscount()
     {
-        $pagador = new Pagador(
+        $pagador = PagadorData::fromEnum(
             TipoInscricao::CPF,
-            '11144477735',
+            11144477735,
             'João da Silva - Teste Update Discount',
             'Rua das Flores, 123',
-            '01234-567',
+            '01234567',
             'São Paulo',
             'Centro',
             'SP',
@@ -802,7 +802,7 @@ class BoletoEndpointsTest extends TestCase
         $numeroTituloCliente = sprintf("000%07d%010d", $convenio, $timestamp % 10000000000);
         $numeroTituloBeneficiario = sprintf("DIS%015d", $timestamp % 1000000000000000); // Max 18 chars
 
-        $boletoData = (new BoletoBuilder())
+        $boletoData = BoletoData::builder()
             ->numeroConvenio($convenio)
             ->numeroCarteira(17)
             ->numeroVariacaoCarteira(35)
@@ -816,10 +816,10 @@ class BoletoEndpointsTest extends TestCase
             ->numeroTituloCliente($numeroTituloCliente)
             ->mensagemBloquetoOcorrencia('Boleto com desconto para teste de alteração')
             ->pagador($pagador)
-            ->indicadorPix('S')
+            ->indicadorPix(true)
             ->build();
 
-        $response = BancoDoBrasil::boletos()->create($boletoData);
+        $response = BancoDoBrasil::boletos()->create($boletoData->toApiArray());
         
         $this->assertTrue($response->successful(), 'Failed to create test boleto with discount: ' . $response->body());
         
@@ -833,12 +833,12 @@ class BoletoEndpointsTest extends TestCase
      */
     private function createTestBoletoWithAbatimento()
     {
-        $pagador = new Pagador(
+        $pagador = PagadorData::fromEnum(
             TipoInscricao::CPF,
-            '11144477735',
+            11144477735,
             'João da Silva - Teste Update Abatimento',
             'Rua das Flores, 123',
-            '01234-567',
+            '01234567',
             'São Paulo',
             'Centro',
             'SP',
@@ -851,7 +851,7 @@ class BoletoEndpointsTest extends TestCase
         $numeroTituloCliente = sprintf("000%07d%010d", $convenio, $timestamp % 10000000000);
         $numeroTituloBeneficiario = sprintf("ABT%015d", $timestamp % 1000000000000000); // Max 18 chars
 
-        $boletoData = (new BoletoBuilder())
+        $boletoData = BoletoData::builder()
             ->numeroConvenio($convenio)
             ->numeroCarteira(17)
             ->numeroVariacaoCarteira(35)
@@ -866,10 +866,10 @@ class BoletoEndpointsTest extends TestCase
             ->numeroTituloCliente($numeroTituloCliente)
             ->mensagemBloquetoOcorrencia('Boleto com abatimento para teste de alteração')
             ->pagador($pagador)
-            ->indicadorPix('S')
+            ->indicadorPix(true)
             ->build();
 
-        $response = BancoDoBrasil::boletos()->create($boletoData);
+        $response = BancoDoBrasil::boletos()->create($boletoData->toApiArray());
         
         $this->assertTrue($response->successful(), 'Failed to create test boleto with abatimento: ' . $response->body());
         

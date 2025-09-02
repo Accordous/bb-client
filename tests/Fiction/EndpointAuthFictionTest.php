@@ -6,7 +6,7 @@ use Tests\TestCase;
 use Accordous\BbClient\Facades\BancoDoBrasil;
 use Illuminate\Support\Facades\Cache;
 
-class GetTokenTest extends TestCase
+class EndpointAuthFictionTest extends TestCase
 {
     protected function setUp(): void
     {

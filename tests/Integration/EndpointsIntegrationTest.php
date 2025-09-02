@@ -3,18 +3,21 @@
 namespace Tests\Integration;
 
 use Accordous\BbClient\Facades\BancoDoBrasil;
-use Accordous\BbClient\ValueObject\BoletoBuilder;
-use Accordous\BbClient\ValueObject\Pagador;
-use Accordous\BbClient\ValueObject\Desconto;
-use Accordous\BbClient\ValueObject\JurosMora;
-use Accordous\BbClient\ValueObject\Multa;
+use Accordous\BbClient\Data\BoletoData;
+use Accordous\BbClient\Data\PagadorData;
+use Accordous\BbClient\Data\DescontoData;
+use Accordous\BbClient\Data\JurosMoraData;
+use Accordous\BbClient\Data\MultaData;
 use Accordous\BbClient\Enums\TipoInscricao;
 use Accordous\BbClient\Enums\CodigoModalidade;
 use Accordous\BbClient\Enums\TipoTitulo;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Cache;
 
-class BancoDoBrasilIntegrationTest extends TestCase
+/**
+ * Testes com requisição real
+ */
+class EndpointsIntegrationTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -45,69 +48,79 @@ class BancoDoBrasilIntegrationTest extends TestCase
 
     // # Boleto Tests
     // Registra Boleto de Cobrança
-    public function test_registrar_boleto_using_builder()
+    public function test_registrar_boleto()
     {
-        $pagador = new Pagador(
+        // Pagador
+        $pagador = PagadorData::fromEnum(
             TipoInscricao::CPF,
-            '11144477735', // CPF válido para teste
-            'João da Silva - Teste',
+            11144477735,
+            'João da Silva - Teste Moderno',
             'Rua das Flores, 123',
-            '01234-567',
+            1234567,
             'São Paulo',
             'Centro',
             'SP',
-            '11999999999'
+            '11999999999',
+            'joao.teste@email.com'
         );
-
-        $desconto = new Desconto(
+        // Desconto
+        $desconto = DescontoData::porcentagem(
             tipo: 2,
             dataExpiracao: '25.08.2025',
-            porcentagem: 5.0,
-            // valor: null
+            porcentagem: 5.0
         );
-        $jurosMora = new JurosMora(
+        // JurosMora
+        $jurosMora = JurosMoraData::porcentagem(
             tipo: 2,
-            porcentagem: 1.0,
-            // valor: 2.0
+            porcentagem: 1.0
         );
-        $multa = new Multa(
+        // Multa
+        $multa = MultaData::valor(
             tipo: 1,
-            data: now()->addDays(31)->format('d.m.Y'), // 1 dia após o vencimento
-            // porcentagem: 2.0,
+            data: now()->addDays(31)->format('d.m.Y'),
             valor: 10.0
         );
 
         $timestamp = time();
         $convenio = (int) config('banco-do-brasil.convenio', 3128557);
-        
+
         // Formatar numeroTituloCliente: "000" + convênio (7 dígitos) + sequencial (10 dígitos)
         $numeroTituloCliente = sprintf("000%07d%010d", $convenio, $timestamp % 10000000000);
 
-        $boletoData = (new BoletoBuilder())
+        // Create boleto using modern builder pattern with Data classes
+        $boletoData = BoletoData::builder()
             ->numeroConvenio($convenio)
             ->numeroCarteira(17)
             ->numeroVariacaoCarteira(35)
-            ->codigoModalidade(CodigoModalidade::SIMPLES)
+            ->codigoModalidade(CodigoModalidade::SIMPLES) // Now uses int enum
             ->dataEmissao(now()->format('d.m.Y'))
             ->dataVencimento(now()->addDays(30)->format('d.m.Y'))
             ->valorOriginal(100.00)
             ->codigoTipoTitulo(TipoTitulo::DUPLICATA_MERCANTIL)
-            ->descricaoTipoTitulo('Duplicata Mercantil')
-            ->numeroTituloBeneficiario('TEST-' . $timestamp)
+            ->descricaoTipoTitulo('Dup Mercantil Mod') // Shortened to fit validation
+            ->numeroTituloBeneficiario('TEST-MOD-' . $timestamp)
             ->numeroTituloCliente($numeroTituloCliente)
-            ->mensagemBloquetoOcorrencia('Teste de integração - Pagamento via PIX disponível')
+            ->mensagemBloquetoOcorrencia('Teste de integração MODERNO - Pagamento via PIX disponível')
             ->pagador($pagador)
             ->desconto($desconto)
             ->jurosMora($jurosMora)
             ->multa($multa)
-            ->indicadorPix('S')
+            ->indicadorPix(true) // Now uses bool for better type safety
             ->build();
 
-        $response = BancoDoBrasil::boletos()->create($boletoData);
+        // Validate data before sending
+        $this->assertInstanceOf(BoletoData::class, $boletoData);
+        $this->assertEquals($convenio, $boletoData->numeroConvenio);
+        $this->assertEquals(1, $boletoData->codigoModalidade); // Enum value as int
+        $this->assertTrue($boletoData->isPixEnabled());
+        $this->assertEquals('João da Silva - Teste Moderno', $boletoData->pagador->nome);
+        $this->assertEquals('joao.teste@email.com', $boletoData->pagador->email);
+
+        $response = BancoDoBrasil::boletos()->create($boletoData->toApiArray());
 
         $this->assertNotEmpty($response);
         $this->assertInstanceOf(\Illuminate\Http\Client\Response::class, $response);
-        $this->assertTrue($response->successful());
+        $this->assertTrue($response->successful(), 'Registrar boleto failed: ' . $response->body());
         
         $data = $response->json();
         $this->assertIsArray($data);
@@ -123,7 +136,6 @@ class BancoDoBrasilIntegrationTest extends TestCase
             $this->fail('API returned errors: ' . json_encode($data['erros']));
         }
     }
-
     // Listar Boletos
     public function test_list_boletos()
     {
@@ -136,22 +148,14 @@ class BancoDoBrasilIntegrationTest extends TestCase
             'quantidadePorPagina' => 10
         ]);
 
-        // echo "\n=== BOLETO LIST RESPONSE DEBUG ===\n";
-        // echo "Status: " . $response->status() . "\n";
-        // echo "Headers: " . json_encode($response->headers()) . "\n";
-        // echo "Body: " . $response->body() . "\n";
-        // echo "=== END LIST DEBUG ===\n";
-
         if (!$response->successful()) {
             $this->markTestIncomplete('Boletos listing failed - Status: ' . $response->status() . ' - Body: ' . $response->body());
         }
 
         $data = $response->json();
-        
-        // Check if response has expected structure
+
         $this->assertIsArray($data);
-        
-        // The API may return different structures, so we check for common keys
+
         $possibleKeys = ['boletos', 'titulos', 'registros'];
         $hasExpectedKey = false;
         
@@ -161,10 +165,20 @@ class BancoDoBrasilIntegrationTest extends TestCase
                 break;
             }
         }
-        
-        $this->assertTrue($hasExpectedKey, 'Response should contain one of: ' . implode(', ', $possibleKeys));
-    }
 
+        $this->assertTrue($hasExpectedKey, 'Response should contain one of: ' . implode(', ', $possibleKeys));
+        
+        // Test Data conversion potential - if we had response DTOs
+        if (isset($data['boletos']) && !empty($data['boletos'])) {
+            $firstBoleto = $data['boletos'][0];
+            
+            // Verify we can get basic fields that would map to our Data classes
+            $this->assertArrayHasKey('numeroBoletoBB', $firstBoleto);
+            
+            // Could potentially create BoletoData from API response:
+            // $boleto = BoletoData::from($firstBoleto); // Future improvement
+        }
+    }
     // Detalha um boleto bancário
     public function test_show_boleto()
     {
@@ -184,16 +198,28 @@ class BancoDoBrasilIntegrationTest extends TestCase
         $this->assertArrayHasKey('valorOriginalTituloCobranca', $data);
         $this->assertEquals(100.0, $data['valorOriginalTituloCobranca']); // From the created boleto
         $this->assertStringContainsString('TEST-', $data['numeroTituloCedenteCobranca']);
+        
+        // Test that we could potentially convert this to a Data class
+        if (isset($data['pagadorTituloCobranca'])) {
+            $pagadorResponse = $data['pagadorTituloCobranca'];
+            
+            // Verify structure matches our PagadorData expectations
+            $this->assertArrayHasKey('nomePagadorTituloCobranca', $pagadorResponse);
+            $this->assertArrayHasKey('numeroInscricaoPagadorTituloCobranca', $pagadorResponse);
+            $this->assertArrayHasKey('tipoInscricaoPagadorTituloCobranca', $pagadorResponse);
+            
+            // Could potentially create PagadorData from response:
+            // $pagador = PagadorData::fromApiResponse($pagadorResponse); // Future improvement
+        }
     }
-
     // Altera um boleto bancário
     public function test_update_boleto()
     {
         // Use a known boleto number from a previously created boleto
-        // In a real test environment, you would get this from the previous test or database
         $boletoNumero = '00031285571756592582'; // Number from debug output above
         $convenio = (int) config('banco-do-brasil.convenio', 3128557);
 
+        // Could create a specific UpdateBoletoData class in the future
         $updateData = [
             'numeroConvenio' => $convenio,
             'indicadorNovaDataVencimento' => 'S',
@@ -215,7 +241,7 @@ class BancoDoBrasilIntegrationTest extends TestCase
         }
     }
 
-    // # Baixa Operacional Tests
+    // # Baixa Operacional tests
     // Desativar
     public function test_desativar_consulta_baixa_operacional()
     {
@@ -298,7 +324,7 @@ class BancoDoBrasilIntegrationTest extends TestCase
             $this->markTestIncomplete('Baixa operacional activation failed with unexpected error: Status ' . $response->status() . ' - Body: ' . $response->body());
         }
     }
-
+    // Consultar
     public function test_consultar_baixa_operacional()
     {
         $agencia = config('banco-do-brasil.agencia', 1234);
@@ -392,7 +418,6 @@ class BancoDoBrasilIntegrationTest extends TestCase
         $this->assertArrayHasKey('mensagem', $firstError);
         $this->assertArrayHasKey('providencia', $firstError);
     }
-
     // Cancelar PIX boleto
     public function test_cancelar_pix_boleto()
     {
@@ -462,10 +487,8 @@ class BancoDoBrasilIntegrationTest extends TestCase
             $firstError = $errorData['erros'][0];
             $this->assertArrayHasKey('codigo', $firstError);
             $this->assertArrayHasKey('mensagem', $firstError);
-            // providencia field is optional in some API responses
         }
     }
-
     // Consultar PIX boleto
     public function test_consultar_pix_boleto()
     {
@@ -542,11 +565,10 @@ class BancoDoBrasilIntegrationTest extends TestCase
             $firstError = $errorData['erros'][0];
             $this->assertArrayHasKey('codigo', $firstError);
             $this->assertArrayHasKey('mensagem', $firstError);
-            // providencia field is optional in some API responses
         }
     }
 
-    // # Webhook Tests
+    // # Webhook tests
     public function test_webhook_baixa_operacional()
     {
         // This test simulates processing a webhook payload
@@ -566,12 +588,16 @@ class BancoDoBrasilIntegrationTest extends TestCase
             'dataLiquidacao' => now()->format('d/m/Y H:i:s'),
             'instituicaoLiquidacao' => '001',
             'canalLiquidacao' => 4,
-            'codigoModalidadeBoleto' => 1,
+            'codigoModalidadeBoleto' => 1, // Modern enum value
             'tipoPessoaPortador' => 2,
             'identidadePortador' => '98959112000179',
-            'nomePortador' => 'TESTE WEBHOOK INTEGRATION',
+            'nomePortador' => 'TESTE WEBHOOK INTEGRATION MODERNO',
             'formaPagamento' => 2
         ];
+
+        // Could potentially create a WebhookData class in the future:
+        // $webhook = WebhookData::from($webhookData);
+        // $this->assertInstanceOf(WebhookData::class, $webhook);
 
         $response = BancoDoBrasil::webhooks()->processarBaixaOperacional($webhookData);
 

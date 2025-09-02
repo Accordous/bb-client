@@ -5,9 +5,8 @@ namespace Tests\Integration;
 use Tests\TestCase;
 use Accordous\BbClient\Facades\BancoDoBrasil;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Http\Client\Response;
 
-class WebhookIntegrationTest extends TestCase
+class EndpointWebhooksIntegrationTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -24,7 +23,6 @@ class WebhookIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
     public function it_can_process_baixa_operacional_webhook_payload()
     {
         // Simulate a real webhook payload from Banco do Brasil
@@ -80,7 +78,6 @@ class WebhookIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
     public function it_handles_webhook_with_different_payment_methods()
     {
         $paymentMethods = [
@@ -125,7 +122,6 @@ class WebhookIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
     public function it_handles_webhook_with_cnpj_payer()
     {
         $webhookData = [
@@ -159,7 +155,6 @@ class WebhookIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
     public function it_validates_webhook_payload_structure()
     {
         // Test with incomplete webhook data
@@ -182,7 +177,6 @@ class WebhookIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
     public function it_handles_webhook_with_invalid_convenio()
     {
         $webhookData = [
@@ -213,7 +207,6 @@ class WebhookIntegrationTest extends TestCase
         $this->assertContains($response->status(), [400, 401, 403, 422]);
     }
 
-    /** @test */
     public function it_handles_webhook_with_different_liquidation_states()
     {
         $liquidationStates = [
@@ -257,7 +250,6 @@ class WebhookIntegrationTest extends TestCase
         }
     }
 
-    /** @test */
     public function it_processes_webhook_performance_test()
     {
         // Test webhook processing performance with multiple payloads

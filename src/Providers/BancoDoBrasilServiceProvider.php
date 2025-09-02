@@ -19,7 +19,13 @@ class BancoDoBrasilServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(BancoDoBrasilClient::class, function ($app) {
-            return new BancoDoBrasilClient(config('banco-do-brasil'));
+            $config = config('banco-do-brasil', []);
+            return new BancoDoBrasilClient(
+                $config['client_id'] ?? null,
+                $config['client_secret'] ?? null,
+                $config['developer_application_key'] ?? null,
+                $config['convenio'] ?? null
+            );
         });
     }
 

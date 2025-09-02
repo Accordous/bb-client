@@ -2,10 +2,10 @@
 
 namespace Accordous\BbClient\Enums;
 
-enum CodigoModalidade: string
+enum CodigoModalidade: int
 {
-    case SIMPLES = '01';
-    case VINCULADA = '04';
+    case SIMPLES = 1;
+    case VINCULADA = 4;
 
     public function getDescription(): string
     {
@@ -15,8 +15,13 @@ enum CodigoModalidade: string
         };
     }
 
-    public static function isValid(string $value): bool
+    public static function isValid(int $value): bool
     {
         return self::tryFrom($value) !== null;
+    }
+
+    public function getFormattedValue(): string
+    {
+        return str_pad((string)$this->value, 2, '0', STR_PAD_LEFT);
     }
 }

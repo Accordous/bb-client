@@ -18,9 +18,9 @@ class BancoDoBrasilClient
     /**
      * BancoDoBrasilClient constructor.
      */
-    public function __construct(array $config)
+    public function __construct(string $clientId, string $clientSecret, string $developerApplicationKey, string $convenio = '')
     {
-        $this->service = new BancoDoBrasilService($config);
+        $this->service = new BancoDoBrasilService($clientId, $clientSecret, $developerApplicationKey, $convenio);
     }
 
     /**

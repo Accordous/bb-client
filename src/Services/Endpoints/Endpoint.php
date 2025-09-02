@@ -9,10 +9,14 @@ use Illuminate\Support\Facades\Validator;
 abstract class Endpoint
 {
     protected PendingRequest $http;
+    protected string $developerApplicationKey;
+    protected string $convenio;
 
-    public function __construct(PendingRequest $http)
+    public function __construct(PendingRequest $http, string $developerApplicationKey, string $convenio = '')
     {
         $this->http = $http;
+        $this->developerApplicationKey = $developerApplicationKey;
+        $this->convenio = $convenio;
     }
 
     protected function client(): PendingRequest
@@ -25,7 +29,7 @@ abstract class Endpoint
      */
     protected function addDevAppKey(array $queryParams = []): array
     {
-        $queryParams['gw-dev-app-key'] = config('banco-do-brasil.developer_application_key');
+        $queryParams['gw-dev-app-key'] = $this->developerApplicationKey;
         return $queryParams;
     }
 
@@ -56,7 +60,7 @@ abstract class Endpoint
     {
         // Ensure URL is complete (add base URL if needed)
         if (!str_starts_with($url, 'http')) {
-            $baseUrl = config('banco-do-brasil.base_url', 'https://api.hm.bb.com.br');
+            $baseUrl = config('banco-brasil.sandbox') ? config('banco-brasil.sandbox_url') : config('banco-brasil.production_url');
             $url = $baseUrl . $url;
         }
         
@@ -65,24 +69,9 @@ abstract class Endpoint
         $authHeader = $headers['Authorization'] ?? '';
         
         if (empty($authHeader)) {
-            // Fallback: get token using OAuth
-            $client_id = config('banco-do-brasil.client_id');
-            $client_secret = config('banco-do-brasil.client_secret');
-            $oauth_url = config('banco-do-brasil.oauth_url', 'https://oauth.hm.bb.com.br/oauth/token');
-            
-            $auth = base64_encode($client_id . ':' . $client_secret);
-            $tokenResponse = \Illuminate\Support\Facades\Http::asForm()
-                ->withHeaders(['Authorization' => 'Basic ' . $auth])
-                ->timeout(30)
-                ->post($oauth_url, [
-                    'grant_type' => 'client_credentials',
-                    'scope' => 'cobrancas.boletos-info cobrancas.boletos-requisicao cobrancas.convenio-requisicao'
-                ]);
-            
-            if ($tokenResponse->successful()) {
-                $tokenData = $tokenResponse->json();
-                $authHeader = 'Bearer ' . $tokenData['access_token'];
-            }
+            // Fallback: This should not happen in normal operation
+            // as credentials are now passed per instance
+            throw new \Exception('Authentication header not found and credentials not available for fallback');
         }
         
         $ch = curl_init();
