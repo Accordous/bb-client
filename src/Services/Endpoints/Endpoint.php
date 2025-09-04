@@ -60,7 +60,7 @@ abstract class Endpoint
     {
         // Ensure URL is complete (add base URL if needed)
         if (!str_starts_with($url, 'http')) {
-            $baseUrl = config('banco-brasil.sandbox') ? config('banco-brasil.sandbox_url') : config('banco-brasil.production_url');
+            $baseUrl = config('banco-do-brasil.base_url');
             $url = $baseUrl . $url;
         }
         

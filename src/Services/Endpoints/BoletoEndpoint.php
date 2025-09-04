@@ -91,7 +91,7 @@ class BoletoEndpoint extends Endpoint
         // If response is not successful and body is empty, the API may have returned JSON
         // but Laravel HTTP client didn't capture it properly. Let's make a cURL request instead.
         if (!$response->successful() && empty($response->body())) {
-            $baseUrl = config('banco-brasil.sandbox') ? config('banco-brasil.sandbox_url') : config('banco-brasil.production_url');
+            $baseUrl = config('banco-do-brasil.base_url');
             $fullUrl = $baseUrl . $path;
             return $this->makeCurlRequest('POST', $fullUrl);
         }
@@ -135,7 +135,7 @@ class BoletoEndpoint extends Endpoint
         // If response is not successful and body is empty, the API may have returned JSON
         // but Laravel HTTP client didn't capture it properly. Let's make a cURL request instead.
         if (!$response->successful() && empty($response->body())) {
-            $baseUrl = config('banco-brasil.sandbox') ? config('banco-brasil.sandbox_url') : config('banco-brasil.production_url');
+            $baseUrl = config('banco-do-brasil.base_url');
             $fullUrl = $baseUrl . $path . '?' . http_build_query($queryParams);
             return $this->makeCurlRequest('GET', $fullUrl);
         }
