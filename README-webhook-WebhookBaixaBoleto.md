@@ -1,4 +1,4 @@
-# 🧾 Schema: `RequisicaoAlterarBoletos` (com descrições)
+# 🧾 Schema: `Objeto de Webook` (com descrições)
 
 O Webhook da API Cobrança notifica o emissor do boleto bancário sobre o recebimento pelo Banco do Brasil de uma Baixa Operacional de um boleto, seja a liquidação (pagamento) ou solicitação de baixa.
 
@@ -16,7 +16,7 @@ https://apoio.developers.bb.com.br/referency/post/6125045d8378f10012877468
 
 | Campo | Tipo | Descrição |
 |-------|------|-------------------|
-| `id` | `string` (20 caracteres) | Identificador único do boleto no sistema do Banco do Brasil. Deve conter apenas dígitos. |
+| `id` | `string` (20 caracteres) (matches \d) | Identificador único do boleto no sistema do Banco do Brasil. Deve conter apenas dígitos. |
 
 ---
 
@@ -34,20 +34,25 @@ https://apoio.developers.bb.com.br/referency/post/6125045d8378f10012877468
 
 | Campo | Tipo | Descrição |
 |-------|------|-------------------|
-| `valorOriginal` | `number` (double) | Valor original do boleto. |
-| `valorPagoSacado` | `number` (double) | Valor efetivamente pago pelo sacado (pagador). |
+| `valorOriginal` | `number` (double) | Valor original do boleto registrado. |
+| `valorPagoSacado` | `number` (double) | Valor pago pelo boleto (considerando evetuais acréscimos ou descontos). |
 
+Para `valorOriginal` e `valorPagoSacado`: Utiliza o padrão americano para números (decimais separados por pontos), as casas dos milhares não são separadas por nenhum caracter e zeros à direita na casas decimais são ignorados.
 ---
 
 ### 🏦 Dados Bancários
 
 | Campo | Tipo | Descrição |
 |-------|------|-------------------|
-| `numeroConvenio` | `integer` | Identificador do convênio de cobrança vinculado ao boleto. |
-| `numeroOperacao` | `integer` | Número da operação bancária associada ao boleto. |
-| `carteiraConvenio` | `integer` | Número da carteira do convênio. |
-| `variacaoCarteiraConvenio` | `integer` | Variação da carteira do convênio. |
-| `codigoModalidadeBoleto` | `integer` | Código da modalidade de cobrança utilizada. |
+| `numeroConvenio` | `integer` | Número da carteira do convênio de cobrança firmado entre o beneficiário e o Banco do Brasil. Um beneficiário pode ter mais de um convênio. |
+| `numeroOperacao` | `integer` | Número da Operação de Cobrança |
+| `carteiraConvenio` | `integer` | Determina as características do serviço de Cobrança e define como os boletos serão tratados pelo BB. |
+| `variacaoCarteiraConvenio` | `integer` | Parâmetro de agrupamento de boletos dentro de uma mesma carteira. |
+| `codigoModalidadeBoleto` | `integer` | É a categoria do serviço de cobrança que indica as particularidades, forma e modelo do serviço de cobrança contratado. |
+
+Possíveis valores para `codigoModalidadeBoleto`:
+1 - Simples
+4 - Vinculada
 
 ---
 
@@ -55,7 +60,12 @@ https://apoio.developers.bb.com.br/referency/post/6125045d8378f10012877468
 
 | Campo | Tipo | Descrição |
 |-------|------|-------------------|
-| `codigoEstadoBaixaOperacional` | `integer` | Código que representa o tipo de baixa operacional. Ex: `06` - Liquidação, `09` - Baixa por solicitação. |
+| `codigoEstadoBaixaOperacional` | `integer` | Código para identificação da situação da Baixa Operacional. |
+
+Possíveis valores para `codigoEstadoBaixaOperacional`:
+1 - Baixa Operacional emitida pelo BB
+2 - Baixa Operacional emitida por outro Banco
+10 - Cancelamento da Baixa Operacional
 
 ---
 
@@ -63,8 +73,19 @@ https://apoio.developers.bb.com.br/referency/post/6125045d8378f10012877468
 
 | Campo | Tipo | Descrição |
 |-------|------|-------------------|
-| `instituicaoLiquidacao` | `integer` (3 dígitos) | Código da instituição recebedora que processou o pagamento. |
-| `canalLiquidacao` | `integer` | Código do canal utilizado para liquidação. Ex: `1` - Internet Banking, `2` - ATM, etc. |
+| `instituicaoLiquidacao` | `integer` (3 dígitos) | Código Compe da Instituição Financeira, com três dígitos numéricos |
+| `canalLiquidacao` | `integer` | Código do canal onde a transação foi realizada. |
+
+Possíveis valores para `canalLiquidacao`:
+1 - Agências - Postos tradicionais
+2 - Terminal de Auto-atendimento
+3 - Internet (home/office banking)
+4 - Pix
+5 - Correspondente bancário
+6 - Central de atendimento (Call Center)
+7 - Arquivo eletrônico
+8 - DDA
+9 - Correspondente bancário digital
 
 ---
 
@@ -72,9 +93,9 @@ https://apoio.developers.bb.com.br/referency/post/6125045d8378f10012877468
 
 | Campo | Tipo | Descrição |
 |-------|------|-------------------|
-| `tipoPessoaPortador` | `integer` | Tipo de pessoa do pagador. Domínios: `1` - Pessoa Física; `2` - Pessoa Jurídica. |
-| `identidadePortador` | `integer` (int64) | Número do CPF ou CNPJ do pagador. |
-| `nomePortador` | `string` | Nome completo do pagador. |
+| `tipoPessoaPortador` | `integer` | Tipo de pessoa do pagador. Valores: `1` - Pessoa Física; `2` - Pessoa Jurídica. |
+| `identidadePortador` | `integer` (int64) | Número do documento fiscal da pessoa que efetuou o pagamento. Retorna CPF para pessoas físicas e CNPJ para pessoas jurídicas. O campo "tipoPessoaPortador" indica qual o tipo de número do documento. |
+| `nomePortador` | `string` | Nome da pessoa que efetuou o pagamento. Pode ser o nome de uma pessoa física ou jurídica. |
 
 ---
 
@@ -82,7 +103,13 @@ https://apoio.developers.bb.com.br/referency/post/6125045d8378f10012877468
 
 | Campo | Tipo | Descrição |
 |-------|------|-------------------|
-| `formaPagamento` | `integer` | Código da forma de pagamento utilizada. Ex: `1` - Dinheiro, `2` - Débito em conta, `3` - Pix, etc. |
+| `formaPagamento` | `integer` | Código da forma de pagamento utilizada. |
+
+Possíveis valores para `formaPagamento`:
+1 - Em espécie
+2 - Débito em conta
+3 - Cartão de Crédito
+4 - Cheque
 
 ## Exemplo completo (JSON)
 ```json
