@@ -8,14 +8,16 @@ namespace Accordous\BbClient\Enums;
  */
 enum WebhookEstadoBaixaOperacional: int
 {
-    case LIQUIDACAO = 6;
-    case BAIXA_POR_SOLICITACAO = 9;
+    case BAIXA_OPERACIONAL_BB = 1;
+    case BAIXA_OPERACIONAL_OUTRO_BANCO = 2;
+    case CANCELAMENTO_BAIXA_OPERACIONAL = 10;
 
     public function getDescription(): string
     {
         return match($this) {
-            self::LIQUIDACAO => 'Liquidação (pagamento)',
-            self::BAIXA_POR_SOLICITACAO => 'Baixa por solicitação',
+            self::BAIXA_OPERACIONAL_BB => 'Baixa Operacional emitida pelo BB',
+            self::BAIXA_OPERACIONAL_OUTRO_BANCO => 'Baixa Operacional emitida por outro Banco',
+            self::CANCELAMENTO_BAIXA_OPERACIONAL => 'Cancelamento da Baixa Operacional',
         };
     }
 
@@ -26,11 +28,11 @@ enum WebhookEstadoBaixaOperacional: int
 
     public function isPayment(): bool
     {
-        return $this === self::LIQUIDACAO;
+        return $this === self::BAIXA_OPERACIONAL_BB || $this === self::BAIXA_OPERACIONAL_OUTRO_BANCO;
     }
 
     public function isCancellation(): bool
     {
-        return $this === self::BAIXA_POR_SOLICITACAO;
+        return $this === self::CANCELAMENTO_BAIXA_OPERACIONAL;
     }
 }
