@@ -14,17 +14,17 @@ class WebhookBaixaBoletoData extends Data
 {
     public function __construct(
         /** Identificador único do boleto no sistema do Banco do Brasil */
-        #[Regex('/^\d{20}$/', message: 'O ID deve conter exatamente 20 dígitos numéricos')]
+        #[Regex('/^\d{20}$/')]
         public string $id,
         
         /** Data em que o boleto foi registrado no sistema (formato dd.mm.aaaa) */
         #[MapInputName('dataRegistro')]
-        #[Regex('/^\d{2}\.\d{2}\.\d{4}$/', message: 'A data de registro deve estar no formato dd.mm.aaaa')]
+        #[Regex('/^\d{2}\.\d{2}\.\d{4}$/')]
         public string $data_registro,
         
         /** Data de vencimento do boleto (formato dd.mm.aaaa) */
         #[MapInputName('dataVencimento')]
-        #[Regex('/^\d{2}\.\d{2}\.\d{4}$/', message: 'A data de vencimento deve estar no formato dd.mm.aaaa')]
+        #[Regex('/^\d{2}\.\d{2}\.\d{4}$/')]
         public string $data_vencimento,
         
         /** Valor original do boleto */
@@ -57,7 +57,7 @@ class WebhookBaixaBoletoData extends Data
         
         /** Data e hora em que o boleto foi liquidado (formato dd/mm/aaaa HH:mm:ss) */
         #[MapInputName('dataLiquidacao')]
-        #[Regex('/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/', message: 'A data de liquidação deve estar no formato dd/mm/aaaa HH:mm:ss')]
+        #[Regex('/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/')]
         public ?string $data_liquidacao = null,
         
         /** Código da instituição recebedora que processou o pagamento */
