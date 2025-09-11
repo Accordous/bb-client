@@ -123,7 +123,7 @@ Possíveis valores para `formaPagamento`:
   "numeroOperacao": 987654,
   "carteiraConvenio": 17,
   "variacaoCarteiraConvenio": 35,
-  "codigoEstadoBaixaOperacional": 6,
+  "codigoEstadoBaixaOperacional": 1,
   "dataLiquidacao": "10/09/2025 14:35:22",
   "instituicaoLiquidacao": 001,
   "canalLiquidacao": 1,

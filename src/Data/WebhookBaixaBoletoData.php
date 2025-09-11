@@ -27,13 +27,17 @@ class WebhookBaixaBoletoData extends Data
         #[MapInputName('valorOriginal')]
         public float $valor_original,
         
-        /** Valor efetivamente pago pelo sacado */
-        #[MapInputName('valorPagoSacado')]
-        public ?float $valor_pago_sacado = null,
-        
         /** Identificador do convênio de cobrança */
         #[MapInputName('numeroConvenio')]
         public int $numero_convenio,
+        
+        /** Código que representa o tipo de baixa operacional */
+        #[MapInputName('codigoEstadoBaixaOperacional')]
+        public int $codigo_estado_baixa_operacional,
+        
+        /** Valor efetivamente pago pelo sacado */
+        #[MapInputName('valorPagoSacado')]
+        public ?float $valor_pago_sacado = null,
         
         /** Número da operação bancária */
         #[MapInputName('numeroOperacao')]
@@ -46,10 +50,6 @@ class WebhookBaixaBoletoData extends Data
         /** Variação da carteira do convênio */
         #[MapInputName('variacaoCarteiraConvenio')]
         public ?int $variacao_carteira_convenio = null,
-        
-        /** Código que representa o tipo de baixa operacional */
-        #[MapInputName('codigoEstadoBaixaOperacional')]
-        public int $codigo_estado_baixa_operacional,
         
         /** Data e hora em que o boleto foi liquidado (formato dd/mm/aaaa HH:mm:ss) */
         #[MapInputName('dataLiquidacao')]
@@ -102,8 +102,24 @@ class WebhookBaixaBoletoData extends Data
         }
 
         try {
-            // Formato esperado: "dd/mm/aaaa HH:mm:ss"
-            return Carbon::createFromFormat('d/m/Y H:i:s', $this->data_liquidacao);
+            // Tenta vários formatos possíveis
+            $formats = [
+                'd/m/Y H:i:s',      // "25/03/2021 05:37:00"
+                'd/m/YH:i:s',       // "25/03/202105:37:00" (sem espaço)
+                'd/m/Y\TH:i:s',     // Formato ISO com T
+                'd/m/Y',            // Apenas data
+            ];
+            
+            foreach ($formats as $format) {
+                try {
+                    return Carbon::createFromFormat($format, $this->data_liquidacao);
+                } catch (\Exception) {
+                    continue;
+                }
+            }
+            
+            // Se nenhum formato funcionou, tenta parsing automático
+            return Carbon::parse($this->data_liquidacao);
         } catch (\Exception) {
             return null;
         }
