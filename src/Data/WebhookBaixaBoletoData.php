@@ -57,7 +57,7 @@ class WebhookBaixaBoletoData extends Data
         
         /** Data e hora em que o boleto foi liquidado (formato dd/mm/aaaa HH:mm:ss) */
         #[MapInputName('dataLiquidacao')]
-        #[Regex('/^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/')]
+        #[Regex('/^\d{2}\/\d{2}\/\d{4}\s?\d{2}:\d{2}:\d{2}$/')]
         public ?string $data_liquidacao = null,
         
         /** Código da instituição recebedora que processou o pagamento */
